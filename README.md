@@ -10,6 +10,6 @@ in your `CMakeLists.txt` by setting `CMAKE_MODULE_PATH` variable.
 
 3. Include script using `include(OptimizeArchitectureFlag)` in your `CMakeLists.txt`
 
-5. Call function `optimize_arch_flag(<output variable name>)`.
+5. Call function `optimize_architecture_flag(<output variable name>)`.
 
 
