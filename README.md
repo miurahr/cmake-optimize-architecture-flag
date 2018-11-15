@@ -8,8 +8,10 @@ such as a SIMD extensions.
 1. Place cmake scripts under `Modules` folder in your project and add search path
 in your `CMakeLists.txt` by setting `CMAKE_MODULE_PATH` variable.
 
-3. Include script using `include(OptimizeArchitectureFlag)` in your `CMakeLists.txt`
+3. Include script using `include(OptimizeArchitectureFlags)` in your `CMakeLists.txt`
 
-5. Call function `optimize_architecture_flag(<output variable name>)`.
+5. Call function `optimize_architecture_flags(<output variable name>)`.
 
+## License
 
+This is distributed under OSI-Approved 3-Clause BSD license.
