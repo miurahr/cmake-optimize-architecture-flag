@@ -47,7 +47,7 @@ if(POLICY CMP0066)
 endif()
 
 function(OPTIMIZE_ARCHITECTURE_FLAGS _outvar)
-    set(OFA_FUNCNAME "optimize_architecture_flag()")
+    set(OFA_FUNCNAME "optimize_architecture_flags()")
     set(_options SSE_INTRINSICS_BROKEN  AVX_INTRINSICS_BROKEN AVX2_INTRINSICS_BROKEN)
     set(_oneValueArgs)
     set(_multiValueArgs)
