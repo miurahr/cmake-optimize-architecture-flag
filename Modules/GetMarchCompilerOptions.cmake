@@ -20,7 +20,6 @@ function(GET_MARCH_COMPILER_OPTIONS outvar tarch)
     if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
         get_x64_march_compiler_options(compiler_options ${tarch})
     elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "ARM")
-        # FIXME implement me
         get_arm_march_compiler_options(compiler_options ${tarch})
     endif()
     set(${outvar} ${compiler_options} PARENT_SCOPE)

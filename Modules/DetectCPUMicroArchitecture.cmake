@@ -23,7 +23,6 @@ function(DETECT_CPU_MICRO_ARCHITECTURE outvar)
     if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
         detect_x64_micro_architecture(detected_architecture)
     elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "ARM")
-        # FIXME implement me
         detect_arm_micro_architecture(detected_architecture)
     endif()
     set(${outvar} ${detected_architecture} PARENT_SCOPE)
