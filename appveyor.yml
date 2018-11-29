@@ -1,0 +1,68 @@
+
+environment:
+  matrix:
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    platform: x64
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    platform: x86
+
+shallow_clone: true
+
+init:
+  - ps: |
+      if($env:platform -eq "x86")
+      {
+        $env:VS_VER=2017
+        $env:ARCHITECTURE="x86"
+        $env:CMAKE_GENERATOR="Visual Studio 15 2017"
+      }
+      else
+      {
+        $env:VS_VER=2015
+        $env:ARCHITECTURE="amd64"
+        $env:CMAKE_GENERATOR="Visual Studio 14 2015 Win64"
+      }
+      function exec
+      {
+        param ( [ScriptBlock] $ScriptBlock )
+        & $ScriptBlock 2>&1 | ForEach-Object -Process { "$_" }
+        if ($LastExitCode -ne 0) { exit $LastExitCode }
+      }
+    ## Accessing build worker via Remote Desktop for debug purpose
+    ## During the build you have full "administrator" access
+    ## to that VM and can access it via Remote Desktop (RDP).
+    ## You need to set password in a setup page.
+    ## https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
+    #
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+    ## If you need to investigate worker on build finish uncomment here instead of above.
+    ## It pauses the build until a special "lock" file on VM desktop is deleted
+    #
+    #  on_failure:
+    #    - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+
+install:
+  - ps: |
+      Install-PackageProvider NuGet -Force
+      Import-PackageProvider NuGet -Force
+      Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+      Install-Module Pscx -AllowClobber
+      Install-Module VSSetup -Scope CurrentUser
+      Import-VisualStudioVars -VisualStudioVersion $env:VS_VER -Architecture $env:ARCHITECTURE
+
+build:
+  - ps: |
+      New-Item -ItemType directory -Path cmake-build-windows
+      Set-Location "$env:APPVEYOR_BUILD_FOLDER\cmake-build-windows"
+      & cmake "-G$env:CMAKE_GENERATOR" -DCMAKE_COLOR_MAKEFILE=OFF .. 2>&1 | %{ "$_" }
+      if ($LastExitCode -ne 0) { write-output "Fails with code:$LastExitCode"; exit 1 }
+      & cmake --build . --config Release 2>&1 | %{ "$_" }
+      if ($LastExitCode -ne 0) { write-output "Fails with code:$LastExitCode"; exit 1 }
+
+
+test_script: off
+
+deploy: off
+

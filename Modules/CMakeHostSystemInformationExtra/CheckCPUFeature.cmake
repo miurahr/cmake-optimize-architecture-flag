@@ -27,7 +27,11 @@ function(CHECK_CPU_FEATURE outvar feature)
       string(TOLOWER "${_cpu_flags}" _cpu_flags)
       string(REPLACE "." "_" _cpu_flags "${_cpu_flags}")
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-      # TODO implement me
+      try_run(RUN_RESULT COMP_RESULT ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}/win32_cpuinfo.c
+              CMAKE_FLAGS -g
+              RUN_OUTPUT_VARIABLE flags)
+      message(STATUS "Detected features: ${flags}")
+
     elseif(CMAKE_SYSTEM_NAME STREQUAL "OpenBSD" OR
            CMAKE_SYSTEM_NAME STREQUAL "FreeBSD" OR
            CMAKE_SYSTME_NAME STREQUAL "NetBSD")
