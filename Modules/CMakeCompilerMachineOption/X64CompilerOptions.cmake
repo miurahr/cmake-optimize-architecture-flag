@@ -2,14 +2,14 @@
 # file Copyright.txt or https://cmake.org/licensing for details.
 
 #[=======================================================================[.rst:
-GetX64MarchCompilerOptions
+X64CompilerOptions
 --------------------------
 
-  Get march flags for target Intel micro architecture
+  Get flags for target Intel micro architecture
 
-.. command:: get_x64_march_compiler_options
+.. command:: x64_compiler_options
 
-   get_x64_march_compiler_options(<output variable> <target architecture>)
+   x64_compiler_options(<output variable> <target architecture>)
 
 #]=======================================================================]
 
@@ -20,7 +20,7 @@ include(CheckIncludeFile)
 
 include("${CMAKE_CURRENT_LIST_DIR}/../GetCPUSIMDFeatures.cmake")
 
-function(GET_X64_MARCH_COMPILER_OPTIONS outvar tarch)
+function(X64_COMPILER_OPTIONS outvar tarch)
     macro(__check_compiler_flag _flag _result)
         if(CMAKE_CXX_COMPILER_LOADED)
             check_cxx_compiler_flag("${_flag}" ${_result})

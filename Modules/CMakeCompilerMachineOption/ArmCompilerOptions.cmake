@@ -7,9 +7,9 @@ GetArmMarchCompilerOptions
 
   Get march flags for target Intel micro architecture
 
-.. command:: get_arm_march_compiler_options
+.. command:: arm_compiler_options
 
-   get_arm_march_compiler_options(<output variable> <target SoC name>)
+   arm_compiler_options(<output variable> <target SoC name>)
 
 #]=======================================================================]
 
@@ -18,7 +18,7 @@ include(CheckCXXCompilerFlag)
 include(CheckIncludeFileCXX)
 include(CheckIncludeFile)
 
-function(GET_ARM_MARCH_COMPILER_OPTIONS outvar tarch)
+function(ARM_COMPILER_OPTIONS outvar tarch)
 
     set(ARCHITECTURE_FLAGS)
 

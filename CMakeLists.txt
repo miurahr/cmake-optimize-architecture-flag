@@ -31,18 +31,18 @@ endif()
 project(ofa-example VERSION 1.0 LANGUAGES C)
 set(CMAKE_MODULE_PATH  ${CMAKE_CURRENT_SOURCE_DIR}/Modules)
 
-include(DetectCPUMicroArchitecture)
+include(CMakeHostSystemInformationExtra)
 include(GetCPUSIMDFeatures)
-include(GetMarchCompilerOptions)
+include(CMakeCompilerMachineOption)
 
 #------------------------------------------------------------------------------
 # Example 1 For self compile
 #
-detect_cpu_micro_architecture(MARCH)
+cmake_host_system_information_extra(RESULT MARCH QUERY MICRO_ARCHITECTURE)
 message(STATUS "Detected micro architecture: ${MARCH}")
-get_cpu_simd_features(fl ${MARCH})
+get_cpu_simd_features(fl "${MARCH}")
 message(STATUS "Detected feature list: ${fl}")
-get_march_compiler_options(op ${MARCH})
+cmake_compiler_machine_option(op ${MARCH})
 message(STATUS "Add followings to compile options: ${op}")
 # use ${op} for target_compile_option() value.
 #------------------------------------------------------------------------------
@@ -54,18 +54,16 @@ message(STATUS "Add followings to compile options: ${op}")
 # then compile optimized for target.
 set(TARGET_ARCHITECTURE "knl" CACHE STRING "CPU architecture to optimize for. \
 Using an incorrect setting here can result in crashes of the resulting binary because of invalid instructions used. \
-Setting the value to \"auto\" will try to optimize for the architecture where cmake is called. \
-Other supported values are: \"none\", \"generic\", \"core\", \"merom\" (65nm Core2), \
+Supported values: \"generic\", \"core\", \"merom\" (65nm Core2), \
 \"penryn\" (45nm Core2), \"nehalem\", \"westmere\", \"sandy-bridge\", \"ivy-bridge\", \
 \"haswell\", \"broadwell\", \"skylake\", \"skylake-xeon\", \"kaby-lake\", \"cannonlake\", \"silvermont\", \
 \"goldmont\", \"knl\" (Knights Landing), \"atom\", \"k8\", \"k8-sse3\", \"barcelona\", \
 \"istanbul\", \"magny-cours\", \"bulldozer\", \"interlagos\", \"piledriver\", \
 \"amd-14h\", \"amd-16h\", \"zen\".")
-get_march_compiler_options(ARCHITECTURE_FLAG ${TARGET_ARCHITECTURE})
+cmake_compiler_machine_option(ARCHITECTURE_FLAG ${TARGET_ARCHITECTURE})
 
 #
 # Set USE_XXX cache variable for swich intrinsics in a source tree.
-# TODO it should also check compiler support.
 #
 # set values _name _flag _documentation
 get_cpu_simd_features(simd_features ${TARGET_ARCHITECTURE})
@@ -80,9 +78,9 @@ set(FMA "fma" "Use FMA.")
 set(BMI2 "bmi2" "Use BMI2." )
 set(AVX2 "avx2" "Use AVX2. This will double all of the vector sizes relative to SSE.")
 set(XOP "xop" "Use XOP.")
-set(FMA4 "fma4" "Use FMA4."})
+set(FMA4 "fma4" "Use FMA4.")
 set(AVX512F "avx512f" "Use AVX512F. This will double all floating-point vector sizes relative to AVX2.")
-set(AVX512VL "avx512vl" "Use AVX512VL. This enables 128- and 256-bit vector length instructions with EVEX coding (improved write-masking & more vector registers)."})
+set(AVX512VL "avx512vl" "Use AVX512VL. This enables 128- and 256-bit vector length instructions with EVEX coding (improved write-masking & more vector registers).")
 set(AVX512PF "avx512pf" "Use AVX512PF. This enables prefetch instructions for gathers and scatters." )
 set(AVX512ER "avx512er" "Use AVX512ER. This enables exponential and reciprocal instructions." )
 set(AVX512CD "avx512cd" "Use AVX512CD." )
@@ -94,18 +92,25 @@ set(NEON "neon" "Use ARM NEON.")
 #--------
 foreach(target IN ITEMS SSE2 SSE3 SSSE3 SSE4_1 SSE4_2 SSE4a AVX FMA BMI2 AVX2 XOP FMA4
         AVX512F AVX512VL AVX512PF AVX512ER AVX512CD AVX512DQ AVX512BW AVX512IFMA AVX512VBMI NEON)
-    set(_name ${target})
-    list(GET ${target} 0 _flag)
-    list(GET ${target} 1 _documentation)
-    list(FIND simd_features "${_flag}" _found)
-    if(_found LESS 0)
-        set(USE_${_name} FALSE CACHE INTERNAL "${documentation}")
-    else()
-        set(USE_${_name} TRUE CACHE INTERNAL "${documentation}")
+  set(_name ${target})
+  list(GET ${target} 0 _flag)
+  list(GET ${target} 1 _documentation)
+  list(FIND simd_features "${_flag}" _found)
+  if(_found GREATER -1)
+    if(CMAKE_CXX_COMPILER_LOADED)
+      check_cxx_compiler_flag("${_flag}" _res)
+    elseif(CMAKE_C_COMPILER_LOADED)
+      check_c_compiler_flag("${_flag}" _res)
     endif()
+    if(_res)
+      set(USE_${_name} TRUE CACHE BOOL "${documentation}")
+      continue()
+    endif()
+  endif()
+  set(USE_${_name} FALSE CACHE BOOL "${documentation}")
 endforeach()
 
 add_executable(ofa-example example.c)
 target_compile_options(ofa-example PRIVATE ${ARCHITECTURE_FLAG})
 
-# vim: ts=4 sw=4 sts=4 et
+# vim: ts=2 sw=2 sts=2 et

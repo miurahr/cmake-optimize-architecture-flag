@@ -2,25 +2,27 @@
 # file Copyright.txt or https://cmake.org/licensing for details.
 
 #[=======================================================================[.rst:
-GetMarchCompilerOptions
+CMakeCompilerMachineOption
 --------------------------
 
   Get march flags for target Intel micro architecture
 
-.. command:: get_march_compiler_options
+.. command:: cmake_compiler_machine_option
 
-   get_march_compiler_options(<output variable> <target architecture>)
+   cmake_compiler_machine_option(<output variable>
+                                 [TARGET_ARCHITECTURE <target architecture>]
+                                 [FEATURES <feature> ...])
 
 #]=======================================================================]
 
-include("${CMAKE_CURRENT_LIST_DIR}/GetMarchCompilerOptions/GetX64MarchCompilerOptions.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/CMakeCompilerMachineOption/X64CompilerOptions.cmake")
 
-function(GET_MARCH_COMPILER_OPTIONS outvar tarch)
+function(CMAKE_COMPILER_MACHINE_OPTION outvar tarch)
     set(compiler_options)
     if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
-        get_x64_march_compiler_options(compiler_options ${tarch})
+        x64_compiler_options(compiler_options ${tarch})
     elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "ARM")
-        get_arm_march_compiler_options(compiler_options ${tarch})
+        arm_compiler_options(compiler_options ${tarch})
     endif()
     set(${outvar} ${compiler_options} PARENT_SCOPE)
 endfunction()
