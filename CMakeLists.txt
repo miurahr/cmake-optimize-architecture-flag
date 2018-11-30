@@ -110,6 +110,7 @@ foreach(target IN ITEMS SSE2 SSE3 SSSE3 SSE4_1 SSE4_2 SSE4a AVX FMA BMI2 AVX2 XO
   set(USE_${_name} FALSE CACHE BOOL "${documentation}")
 endforeach()
 
+message(STATUS "Use compiler option: ${ARCHITECTURE_FLAG}")
 add_executable(ofa-example example.c)
 target_compile_options(ofa-example PRIVATE ${ARCHITECTURE_FLAG})
 
