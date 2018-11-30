@@ -17,10 +17,6 @@ DetectCPUMicroArchitecture
 #]=======================================================================]
 
 function(DETECT_X64_MICRO_ARCHITECTURE outvar)
-    if(NOT "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
-        return()
-    endif()
-
     set(_vendor_id)
     set(_cpu_family)
     set(_cpu_model)

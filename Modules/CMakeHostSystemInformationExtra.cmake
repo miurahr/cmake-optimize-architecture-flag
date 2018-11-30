@@ -39,8 +39,18 @@ Key                           Description
 ``HAS_AMD_3DNOW``             One if processor supports 3DNow instructions
 ``HAS_ARM_NEON``              One if processor supports NEON instructions
 ``HAS_ARM_VFPV3``             One if processor supports VFPv3 instructions
-``HAS_ARM_VFPV4``             One if processor supports VFPv4 instructions
-``HAS_ARM_VFPD32``            One if processor supports VFPD32 instructions
+``HAS_ARM_VFPV3D16``          One if processor supports VFPv3 instructions
+                              with only 16 double-precision registers (d0-d15)
+``HAS_ARM_VFPV4``             One if processor supports fused multiply-add
+                              instructions
+``HAS_ARM_VFPD32``            One if processor supports VFP with 32 double-
+                              precision registers (d0-d31)
+``HAS_ARM_IWMMXT``            One if processor supports Intel/Marvell Wireless
+                              MMX instructions. 64-bit integer SIMD
+``HAS_AES``                   One if processor supports AES instructions
+``HAS_SHA1``                  One if processor supports SHA1 instructions
+``HAS_SHA2``                  One if processor supports SHA2 instructions
+``HAS_CRC32``                 One if processor supports CRC32 instructions
 ============================= ================================================
 
 #]=======================================================================]
@@ -86,8 +96,6 @@ function(CMAKE_HOST_SYSTEM_INFORMATION_EXTRA)
         detect_x64_micro_architecture(detected_architecture)
       elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(ARM|ARM64)")
         detect_arm_micro_architecture(detected_architecture)
-      elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(PPC|PPC64)")
-        # TODO implement me.
       endif()
       list(APPEND _RESULT_LIST ${detected_architecture})
       continue()
