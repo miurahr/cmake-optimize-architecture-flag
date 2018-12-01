@@ -1,18 +1,30 @@
+language: c
+##set ICC serial number by travis command
+#env:
+#  global:
+#    - secure: "xxxxxxxxxxxxxxxxxxxx"
+
 matrix:
   fast_finish: true
   include:
   - os: linux
-    language: cpp
     compiler: gcc
   - os: linux
-    language: cpp
     compiler: clang
   - os: osx
-    language: cpp
     compiler: clang
+#  - os: linux
+#    env:
+#      - CC=icc
+
+before_install:
+  - '[ "X${CC}" == "Xicc" ] && install-icc.sh || true'
 
 script:
   - mkdir build
   - cd build
   - cmake ..
   - cmake --build .
+
+after_script:
+  - '[[ ! -z "${INTEL_INSTALL_PATH}" ]] && uninstall_intel_software'
