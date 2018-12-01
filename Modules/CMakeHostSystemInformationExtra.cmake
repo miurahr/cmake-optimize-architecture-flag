@@ -26,6 +26,8 @@ Key                           Description
 ============================= ================================================
 ``MICRO_ARCHITECTURE``        Micro architecture code name of CPU
 ``HAS_SSE2``                  One if processor supports SSE2 instructions
+``HAS_SSE3``                  One if processor supports SSE3 Prescot New
+                              Instruction sets instructions
 ``HAS_SSSE3``                 One if processor supports SSSE3 instructions
 ``HAS_SSE4_1``                One if processor supports SSE4.1 instructions
 ``HAS_SSE4_2``                One if processor supports SSE4.2 instructions
@@ -36,7 +38,10 @@ Key                           Description
 ``HAS_3DNOWPREFETCH``         One if processor supports 3DNow instructions
 ``HAS_CONSTANT_TSC``          One if processor has constant tsc
 ``HAS_VMX``                   One if processor supports VMX instructions
-``HAS_AMD_3DNOW``             One if processor supports 3DNow instructions
+``HAS_AMD_3DNOW``             One if processor supports 3DNow! instructions
+``HAS_AMD_3DNOWEXT``          One if processor supports 3DNow! Plus extensions
+``HAS_3DNOWPREFETCH``         One if processor supports 3DNow Prefetch
+                              instructions
 ``HAS_ARM_NEON``              One if processor supports NEON instructions
 ``HAS_ARM_VFPV3``             One if processor supports VFPv3 instructions
 ``HAS_ARM_VFPV3D16``          One if processor supports VFPv3 instructions
@@ -92,9 +97,9 @@ function(CMAKE_HOST_SYSTEM_INFORMATION_EXTRA)
     endif()
     if(_query STREQUAL MICRO_ARCHITECTURE)
       set(detected_architecture)
-      if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
+      if("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
         detect_x64_micro_architecture(detected_architecture)
-      elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(ARM|ARM64)")
+      elseif("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(ARM|ARM64)")
         detect_arm_micro_architecture(detected_architecture)
       endif()
       list(APPEND _RESULT_LIST ${detected_architecture})
