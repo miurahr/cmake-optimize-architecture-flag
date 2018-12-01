@@ -11,16 +11,29 @@ such as a SIMD extensions.
 1. Place cmake scripts under `Modules` folder in your project and add search path
 in your `CMakeLists.txt` by setting `CMAKE_MODULE_PATH` variable.
 
-3. Include script using 
+2. Include script using 
+
 ```
 include(CMakeHostSystemInformationExtra)
 include(GetCPUSIMDFeatures)
-include(GetMarchCompilerOptions)
+include(CMakeCompilerMachineOption)
 ```
 in your `CMakeLists.txt`
 
-5. Call function `cmake_host_system_information_extra(RESULT <output variable name> QUERY <query> ...)`.
+3. Call function `cmake_host_system_information_extra(RESULT <output variable name> QUERY <query> ...)`
+to detect host system information.
 
+4. Optimize compiler options
+
+  Here is an example to optimize example project for skylake generation of Intel CPU.
+```
+set(TARGET_ARCHITECTURE skylake)
+cmake_compiler_machine_option(ARCHITECTURE_FLAG ${TARGET_ARCHITECTURE})
+message(STATUS "Use compiler option: ${ARCHITECTURE_FLAG}")
+add_executable(example example.c)
+target_compile_options(example PRIVATE ${ARCHITECTURE_FLAG})
+```
+Please see CMakeLists.txt for more details.
 
 ## License
 
