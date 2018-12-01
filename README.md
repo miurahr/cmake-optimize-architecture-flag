@@ -1,5 +1,8 @@
 # Optimize cflags for architecture features
 
+[![Build Status](https://travis-ci.org/miurahr/cmake-optimize-architecture-flag.svg?branch=master)](https://travis-ci.org/miurahr/cmake-optimize-architecture-flag)
+[![Build status](https://ci.appveyor.com/api/projects/status/3xbllgket0ws79dw?svg=true)](https://ci.appveyor.com/project/miurahr/cmake-optimize-architecture-flag)
+
 Here is a cmake module and sample program to optimize architecture features
 such as a SIMD extensions.
 
