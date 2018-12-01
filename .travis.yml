@@ -1,0 +1,18 @@
+matrix:
+  fast_finish: true
+  include:
+  - os: linux
+    language: cpp
+    compiler: gcc
+  - os: linux
+    language: cpp
+    compiler: clang
+  - os: osx
+    language: cpp
+    compiler: clang
+
+script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build .
