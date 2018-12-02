@@ -18,6 +18,10 @@ Check CPU feature
 
 #]=======================================================================]
 
+# We must run the following at "include" time, not at function call time,
+# to find the path to this module rather than the path to a calling list file
+get_filename_component(_checkcpufeaturedir ${CMAKE_CURRENT_LIST_FILE} PATH)
+
 function(CHECK_CPU_FEATURE outvar feature)
   if(NOT _check_cpu_feature_values)
     set(_cpu_flags)
@@ -33,7 +37,7 @@ function(CHECK_CPU_FEATURE outvar feature)
       string(REPLACE "." "_" _cpu_flags "${_cpu_flags}")
     elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
       if("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
-        try_run(RUN_RESULT COMP_RESULT ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}/win32_cpufeatures.c
+        try_run(RUN_RESULT COMP_RESULT ${CMAKE_CURRENT_BINARY_DIR} ${_checkcpufeaturedir}/win32_cpufeatures.c
                 CMAKE_FLAGS -g
                 RUN_OUTPUT_VARIABLE flags)
         message(STATUS "Detected features: ${flags}")
@@ -54,7 +58,7 @@ function(CHECK_CPU_FEATURE outvar feature)
       string(TOLOWER "${_cpu_flags}" _cpu_flags)
     else()
       if(CMAKE_COMPILER_IS_GNUCC)
-        try_run(RUN_RESULT COMP_RESULT ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}/gcc_cpufeatures.c
+        try_run(RUN_RESULT COMP_RESULT ${CMAKE_CURRENT_BINARY_DIR} ${_checkcpufeaturedir}/gcc_cpufeatures.c
                 CMAKE_FLAGS -g
                 RUN_OUTPUT_VARIABLE flags)
         message(STATUS "Detected features: ${flags}")

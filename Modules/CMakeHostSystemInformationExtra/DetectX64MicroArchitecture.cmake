@@ -16,6 +16,10 @@ DetectCPUMicroArchitecture
 
 #]=======================================================================]
 
+# We must run the following at "include" time, not at function call time,
+# to find the path to this module rather than the path to a calling list file
+get_filename_component(_detextx64microarchitecturedir ${CMAKE_CURRENT_LIST_FILE} PATH)
+
 function(DETECT_X64_MICRO_ARCHITECTURE outvar)
   set(_vendor_id)
   set(_cpu_family)
@@ -43,7 +47,7 @@ function(DETECT_X64_MICRO_ARCHITECTURE outvar)
     string(REGEX REPLACE ".* Model ([0-9]+) .*" "\\1" _cpu_model "${_cpu_id}")
   else()
     if(CMAKE_COMPILER_IS_GNUCC)
-      try_run(RUN_RESULT COMP_RESULT ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}/gcc_cpuinfo.c
+      try_run(RUN_RESULT COMP_RESULT ${CMAKE_CURRENT_BINARY_DIR} ${_detectx64microarchitecturedir}/gcc_cpuinfo.c
               CMAKE_FLAGS -g
               RUN_OUTPUT_VARIABLE _cpu_model)
       message(STATUS "Detected CPU model: ${_cpu_model}")
