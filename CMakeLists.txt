@@ -41,14 +41,18 @@ include(CMakeCompilerMachineOption)
 cmake_host_system_information_extra(RESULT MARCH QUERY MICRO_ARCHITECTURE)
 message(STATUS "Detected micro architecture: ${MARCH}")
 get_cpu_simd_features(fl "${MARCH}")
-message(STATUS "Detected feature list: ${fl}")
+message(STATUS "Micro architecture ${MARHC} has features: ${fl}")
 cmake_compiler_machine_option(op ${MARCH})
-message(STATUS "Add followings to compile options: ${op}")
+message(STATUS "Compiler accept following options: ${op}")
 # use ${op} for target_compile_option() value.
 #------------------------------------------------------------------------------
+# Example 2 check for some feature
+#
+cmake_host_system_information_extra(RESULT VAL QUERY HAS_AVX)
+message(STATUS "Check host system has AVX feature: ${VAL}")
 
 #------------------------------------------------------------------------------
-# Example 2 for cross compile
+# Example 3 for cross compile
 #
 # For cross compile, we should specify explicitly target platform,
 # then compile optimized for target.
@@ -64,42 +68,14 @@ cmake_compiler_machine_option(ARCHITECTURE_FLAG ${TARGET_ARCHITECTURE})
 
 #
 # Set USE_XXX cache variable for swich intrinsics in a source tree.
-#
-# set values _name _flag _documentation
 get_cpu_simd_features(simd_features ${TARGET_ARCHITECTURE})
-set(SSE2 "sse2" "Use SSE2. If SSE2 instructions are not enabled the SSE implementation will be disabled.")
-set(SSE3 "sse3" "Use SSE3. If SSE3 instructions are not enabled they will be emulated.")
-set(SSSE3 "ssse3" "Use SSSE3. If SSSE3 instructions are not enabled they will be emulated.")
-set(SSE4_1 "sse4.1" "Use SSE4.1. If SSE4.1 instructions are not enabled they will be emulated.")
-set(SSE4_2 "sse4.2" "Use SSE4.2. If SSE4.2 instructions are not enabled they will be emulated.")
-set(SSE4a "sse4a" "Use SSE4a. If SSE4a instructions are not enabled they will be emulated.")
-set(AVX "avx" "Use AVX. This will all floating-point vector sizes relative to SSE.")
-set(FMA "fma" "Use FMA.")
-set(BMI2 "bmi2" "Use BMI2." )
-set(AVX2 "avx2" "Use AVX2. This will double all of the vector sizes relative to SSE.")
-set(XOP "xop" "Use XOP.")
-set(FMA4 "fma4" "Use FMA4.")
-set(AVX512F "avx512f" "Use AVX512F. This will double all floating-point vector sizes relative to AVX2.")
-set(AVX512VL "avx512vl" "Use AVX512VL. This enables 128- and 256-bit vector length instructions with EVEX coding (improved write-masking & more vector registers).")
-set(AVX512PF "avx512pf" "Use AVX512PF. This enables prefetch instructions for gathers and scatters." )
-set(AVX512ER "avx512er" "Use AVX512ER. This enables exponential and reciprocal instructions." )
-set(AVX512CD "avx512cd" "Use AVX512CD." )
-set(AVX512DQ "avx512dq" "Use AVX512DQ." )
-set(AVX512BW "avx512bw" "Use AVX512BW." )
-set(AVX512IFMA "avx512ifma" "Use AVX512IFMA." )
-set(AVX512VBMI "avx512vbmi" "Use AVX512VBMI." )
-set(NEON "neon" "Use ARM NEON.")
-#--------
 foreach(target IN ITEMS SSE2 SSE3 SSSE3 SSE4_1 SSE4_2 SSE4a AVX FMA BMI2 AVX2 XOP FMA4
         AVX512F AVX512VL AVX512PF AVX512ER AVX512CD AVX512DQ AVX512BW AVX512IFMA AVX512VBMI NEON)
-  set(_name ${target})
-  list(GET ${target} 0 _flag)
-  list(GET ${target} 1 _documentation)
+      string(TOLOWER ${target} _flag)
   list(FIND simd_features "${_flag}" _found)
   if(_found GREATER -1)
     if(MSVC)
-      string(TOUPPER ${_flag} _flag)
-      set(_flag "/arch:${_flag}")
+      set(_flag "/arch:${target}")
     else()
       set(_flag "-m${_flag}")
     endif()
@@ -109,11 +85,11 @@ foreach(target IN ITEMS SSE2 SSE3 SSSE3 SSE4_1 SSE4_2 SSE4a AVX FMA BMI2 AVX2 XO
       check_c_compiler_flag("${_flag}" test_${_name})
     endif()
     if(test_${_name})
-      set(USE_${_name} TRUE CACHE BOOL "${documentation}")
+      set(USE_${_name} TRUE CACHE BOOL "")
       continue()
     endif()
   endif()
-  set(USE_${_name} FALSE CACHE BOOL "${documentation}")
+  set(USE_${_name} FALSE CACHE BOOL "")
 endforeach()
 
 message(STATUS "Use compiler option: ${ARCHITECTURE_FLAG}")
