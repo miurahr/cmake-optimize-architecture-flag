@@ -155,20 +155,30 @@ function(DETECT_X64_MICRO_ARCHITECTURE outvar)
     endif(_cpu_family EQUAL 6)
   elseif(_vendor_id STREQUAL "AuthenticAMD")
     if(_cpu_family EQUAL 23)
-      set(MICRO_ARCHITECTURE "zen")
+      set(MICRO_ARCHITECTURE "amdfam17h" "znver1")
     elseif(_cpu_family EQUAL 22) # 16h
-      set(MICRO_ARCHITECTURE "AMD 16h")
-    elseif(_cpu_family EQUAL 21) # 15h
-      if(_cpu_model LESS 2)
-        set(MICRO_ARCHITECTURE "bulldozer")
+      if(_cpu_model LESS 16)
+        set(MICRO_ARCHITECTURE "jaguar" "btver2")
       else()
-        set(MICRO_ARCHITECTURE "piledriver")
+        set(MICRO_ARCHITECTURE "puma" "btver2")
+      endif()
+    elseif(_cpu_family EQUAL 21) # 15h
+      set(MICRO_ARCHITECTURE "amdfam15h")
+      if(_cpu_model LESS 2)
+        set(MICRO_ARCHITECTURE ${MICRO_ARCHITECTURE} "bulldozer" "bdver1")
+      elseif(_cpu_model LESS 32)
+        set(MICRO_ARCHITECTURE ${MICRO_ARCHITECTURE} "piledriver" "bdver2")
+      elseif(_cpu_model LESS 64)
+        set(MICRO_ARCHITECTURE ${MICRO_ARCHITECTURE} "steamroller" "bdver3")
+      elseif(_cpu_model LESS 112)
+        set(MICRO_ARCHITECTURE ${MICRO_ARCHITECTURE} "excavator" "bdver4")
       endif()
     elseif(_cpu_family EQUAL 20) # 14h
-      set(MICRO_ARCHITECTURE "AMD 14h")
+      set(MICRO_ARCHITECTURE "btver1")
     elseif(_cpu_family EQUAL 18) # 12h
-    elseif(_cpu_family EQUAL 16) # 10h
       set(MICRO_ARCHITECTURE "barcelona")
+    elseif(_cpu_family EQUAL 16) # 10h
+      set(MICRO_ARCHITECTURE "amdfam10h")
     elseif(_cpu_family EQUAL 15)
       set(MICRO_ARCHITECTURE "k8")
       if(_cpu_model GREATER 64) # I don't know the right number to put here. This is just a guess from the hardware I have access to

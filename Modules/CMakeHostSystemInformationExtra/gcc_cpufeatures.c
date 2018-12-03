@@ -6,8 +6,9 @@
 
 #define PRINT_CPU_FEATURE(a) if(__builtin_cpu_supports(a)){printf("%s\n", a);}
 int main() {
+#if defined(GCC_VERSION)
     __builtin_cpu_init ();
-
+#endif
     // these can be found by gcc8.2
     PRINT_CPU_FEATURE("cmov");
     PRINT_CPU_FEATURE("mmx");

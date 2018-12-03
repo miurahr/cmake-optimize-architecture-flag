@@ -6,8 +6,9 @@
 #define PRINT_CPU_MICRO_ARCH(a) if(__builtin_cpu_is(a)){printf("%s\n", a);return 0;}
 
 int main() {
+#if defined(GCC_VERSION)
     __builtin_cpu_init ();
-
+#endif
     // these can be found by gcc8.2
     PRINT_CPU_MICRO_ARCH("znver1");
     PRINT_CPU_MICRO_ARCH("amdfam17h");
