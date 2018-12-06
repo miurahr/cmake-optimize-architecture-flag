@@ -41,8 +41,8 @@ include(CMakeCompilerMachineOption)
 cmake_host_system_information_extra(RESULT MARCH QUERY MICRO_ARCHITECTURE)
 message(STATUS "Detected micro architecture: ${MARCH}")
 get_cpu_simd_features(fl "${MARCH}")
-message(STATUS "Micro architecture ${MARHC} has features: ${fl}")
-cmake_compiler_machine_option(op ${MARCH})
+message(STATUS "Micro architecture ${MARCH} has features: ${fl}")
+cmake_compiler_machine_option(op "${MARCH}")
 message(STATUS "Compiler accept following options: ${op}")
 # use ${op} for target_compile_option() value.
 #------------------------------------------------------------------------------
