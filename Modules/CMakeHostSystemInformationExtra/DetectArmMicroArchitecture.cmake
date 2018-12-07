@@ -9,14 +9,14 @@ DetectArmMicroArchitecture
 
 .. command:: detect_arm_micro_architecture
 
-   detect_arm_micro_architecture(<output variable name>)
+   detect_arm_micro_architecture(<output implementer> <output SoC> <output Arch>)
 
-  Determine the host ARM CPU micro architecture and retrun
-  a code name.
+  Determine the host ARM CPU and return implementer, SoC name,
+  and its architecture.
 
 #]=======================================================================]
 
-function(DETECT_ARM_MICRO_ARCHITECTURE outvar1 outvar2)
+function(DETECT_ARM_MICRO_ARCHITECTURE outvar1 outvar2 outvar3)
   set(arm_list
       0x810 "ARM810" 0x920 "ARM920" 0x922 "ARM922" 0x926 "ARM926" 0x940 "ARM940"
       0x946 "ARM946" 0x966 "ARM966" 0xa20 "ARM1020" 0xa22 "ARM1022" 0xa26 "ARM1026"
@@ -52,25 +52,20 @@ function(DETECT_ARM_MICRO_ARCHITECTURE outvar1 outvar2)
       0x53 samsung "Samsung"
       0x56 marvell "Marvell"
       0x69 intel   "Intel")
+  set(arch7 0x0 "ARMv7" 0x1 "ARMv7-A")
+  set(arch8 0x0 "ARMv8" 0x1 "ARMv8-A")
 
-  set(_cpu_vendor)
   set(_cpu_architecture)
   set(_cpu_implementer)
-  set(_cpu_variant)
   set(_cpu_part)
   if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux") # Linux and Android
     file(READ "/proc/cpuinfo" _cpuinfo)
-    string(REGEX REPLACE ".*CPU vendor_id[ \t]*:[ \t]+([a-zA-Z0-9_-]+).*" "\\1" _cpu_vendor "${_cpuinfo}")
-    string(REGEX REPLACE ".*CPU architecture[ \t]*:[ \t]+([a-zA-Z0-9_-]+).*" "\\1" _cpu_architecture "${_cpuinfo}")
-    string(REGEX REPLACE ".*CPU implementer[ \t]*:[ \t]+([a-zA-Z0-9_-]+).*" "\\1" _cpu_implementer "${_cpuinfo}")
-    string(REGEX REPLACE ".*CPU variant[ \t]*:[ \t]+([a-zA-Z0-9_-]+).*" "\\1" _cpu_variant "${_cpuinfo}")
-    string(REGEX REPLACE ".*CPU part[ \t]*:[ \t]+([a-zA-Z0-9_-]+).*" "\\1" _cpu_part "${_cpuinfo}")
-    unset(_cpuinfo)
-  elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-    # TODO implement me.
-  endif()
-  if(_cpu_vendor MATCHES "^0x.*")
-    list(FIND hw_implementer ${_cpu_vendor} _found)
+    string(REGEX REPLACE ".*CPU[ \t]*architecture[ \t]*:[ \t]+([6-9]).*" "\\1" _cpu_architecture "${_cpuinfo}")
+    string(REGEX REPLACE ".*CPU[ \t]*variant[ \t]*:[ \t]+(0x[a-f0-9]+).*" "\\1" _cpu_variant "${_cpuinfo}")
+    string(REGEX REPLACE ".*CPU[ \t]*implementer[ \t]*:[ \t]+(0x[a-f0-9]+).*" "\\1" _cpu_implementer "${_cpuinfo}")
+    string(REGEX REPLACE ".*CPU[ \t]*part[ \t]*:[ \t]+(0x[a-f0-9]+).*" "\\1" _cpu_part "${_cpuinfo}")
+    # detect implementer and part ID
+    list(FIND hw_implementer ${_cpu_implementer} _found)
     if(_found GREATER -1)
       math(EXPR index "${_found}+2")
       list(GET hw_implementer ${index} _implementer)
@@ -82,17 +77,29 @@ function(DETECT_ARM_MICRO_ARCHITECTURE outvar1 outvar2)
         math(EXPR index "${_found}+1")
         list(GET ${PART}_list ${index} _soc)
       else()
-        message(STATUS "Unkown part")
+        set(_soc Unknown)
       endif()
     else()
-      message(STATUS "Unkown implementer")
       set(_implementer Unknown)
       set(_soc Unknown)
     endif()
+    # detect cpu architecture
+    if((_cpu_architecture STREQUALS "7") OR
+       (_cpu_architecture STREQUALS "8"))
+      list(FIND arch${_cpu_architecture} ${_cpu_variant} _found)
+      if(_found GREATER -1)
+        math(EXPR index "${_found}+1")
+        list(GET arch${_cpu_architecture} ${index} _archname)
+      else()
+        set(_archname Unknown)
+      endif()
+    endif()
   else()
-    set(_implementer ${_cpu_vendor})
-    set(_soc ${_cpu_family})
+    set(_implementer Unknown)
+    set(_soc Unknown)
+    set(_archname Unknown)
   endif()
   set(${outvar1} "${_implementer}" PARENT_SCOPE)
   set(${outvar2} "${_soc}" PARENT_SCOPE)
+  set(${outvar3} "${_archname}" PARENT_SCOPE)
 endfunction()
