@@ -38,7 +38,7 @@ include(CMakeCompilerMachineOption)
 #------------------------------------------------------------------------------
 # Example 1 For self compile
 #
-cmake_host_system_information_extra(RESULT MARCH QUERY MICRO_ARCHITECTURE)
+cmake_host_system_information_extra(RESULT MARCH QUERY PROCESSOR_MICRO_ARCHITECTURE)
 message(STATUS "Detected micro architecture: ${MARCH}")
 get_cpu_simd_features(fl "${MARCH}")
 message(STATUS "Micro architecture ${MARCH} has features: ${fl}")

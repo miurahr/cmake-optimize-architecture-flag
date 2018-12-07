@@ -9,7 +9,7 @@ DetectCPUMicroArchitecture
 
 .. command:: detect_x64_micro_architecture
 
-   detect_x64_micro_architecture(<output variable name>)
+   detect_x64_micro_architecture(<output vendor> <output arch>)
 
   Determine the host Intel/AMD CPU micro architecture and retrun
   a code name.
@@ -20,7 +20,7 @@ DetectCPUMicroArchitecture
 # to find the path to this module rather than the path to a calling list file
 get_filename_component(_detextx64microarchitecturedir ${CMAKE_CURRENT_LIST_FILE} PATH)
 
-function(DETECT_X64_MICRO_ARCHITECTURE outvar)
+function(DETECT_X64_MICRO_ARCHITECTURE out_vendor out_arch)
   set(_vendor_id)
   set(_cpu_family)
   set(_cpu_model)
@@ -146,7 +146,7 @@ function(DETECT_X64_MICRO_ARCHITECTURE outvar)
         endif()
       endif()
     elseif(_cpu_family EQUAL 7) # Itanium (not supported)
-      message(WARNING "${OFA_FUNCNAME}:Your CPU (Itanium: family ${_cpu_family}, model ${_cpu_model}) is not supported by OptimizeForArchitecture.cmake.")
+      message(WARNING "${OFA_FUNCNAME}:Your CPU (Itanium: family ${_cpu_family}, model ${_cpu_model}) is not supported.")
     elseif(_cpu_family EQUAL 15) # NetBurst
       list(APPEND _available_vector_units_list "sse" "sse2")
       if(_cpu_model GREATER 2) # Not sure whether this must be 3 or even 4 instead
@@ -186,5 +186,6 @@ function(DETECT_X64_MICRO_ARCHITECTURE outvar)
       endif(_cpu_model GREATER 64)
     endif()
   endif(_vendor_id STREQUAL "GenuineIntel")
-  set(${outvar} ${MICRO_ARCHITECTURE} PARENT_SCOPE)
+  set(${out_vendor} ${_vendor_id} PARENT_SCOPE)
+  set(${out_arch} ${MICRO_ARCHITECTURE} PARENT_SCOPE)
 endfunction()

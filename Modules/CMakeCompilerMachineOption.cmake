@@ -19,9 +19,9 @@ include("${CMAKE_CURRENT_LIST_DIR}/CMakeCompilerMachineOption/X64CompilerOptions
 
 function(CMAKE_COMPILER_MACHINE_OPTION outvar tarch)
     set(compiler_options)
-    if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
+    if("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
         x64_compiler_options(compiler_options ${tarch})
-    elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "ARM")
+    elseif("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(ARM|aarch64)")
         arm_compiler_options(compiler_options ${tarch})
     endif()
     set(${outvar} ${compiler_options} PARENT_SCOPE)

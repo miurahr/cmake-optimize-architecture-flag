@@ -17,12 +17,12 @@ GetCPUSIMDFeatures
 include("${CMAKE_CURRENT_LIST_DIR}/GetCPUSIMDFeatures/GetX64SIMDFeatures.cmake")
 
 function(GET_CPU_SIMD_FEATURES outvar target_architecture)
-    if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
+    if("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
         get_x64_simd_features(features ${target_architecture})
-    elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "ARM")
+    elseif("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(ARM|aarch64)")
         # FIXME implement me
         message(WARNING "get_arm_simd_features():Not implemented yet. Implement me!")
-    elseif("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "(PPC|PPC64)")
+    elseif("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(PPC|PPC64)")
         # FIXME implement me
         message(WARNING "get_ppc_simd_features():Not implemented yet. Implement me!")
     endif()

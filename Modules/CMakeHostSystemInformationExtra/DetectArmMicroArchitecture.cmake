@@ -17,6 +17,7 @@ DetectArmMicroArchitecture
 #]=======================================================================]
 
 function(DETECT_ARM_MICRO_ARCHITECTURE outvar1 outvar2 outvar3)
+  # part : corename  for each implementer
   set(arm_list
       0x810 "ARM810" 0x920 "ARM920" 0x922 "ARM922" 0x926 "ARM926" 0x940 "ARM940"
       0x946 "ARM946" 0x966 "ARM966" 0xa20 "ARM1020" 0xa22 "ARM1022" 0xa26 "ARM1026"
@@ -52,8 +53,6 @@ function(DETECT_ARM_MICRO_ARCHITECTURE outvar1 outvar2 outvar3)
       0x53 samsung "Samsung"
       0x56 marvell "Marvell"
       0x69 intel   "Intel")
-  set(arch7 0x0 "ARMv7" 0x1 "ARMv7-A")
-  set(arch8 0x0 "ARMv8" 0x1 "ARMv8-A")
 
   set(_cpu_architecture)
   set(_cpu_implementer)
@@ -75,31 +74,21 @@ function(DETECT_ARM_MICRO_ARCHITECTURE outvar1 outvar2 outvar3)
       list(FIND ${PART}_list ${_cpu_part} _found)
       if(_found GREATER -1)
         math(EXPR index "${_found}+1")
-        list(GET ${PART}_list ${index} _soc)
+        list(GET ${PART}_list ${index} _core)
       else()
-        set(_soc Unknown)
+        set(_core Unknown)
       endif()
     else()
       set(_implementer Unknown)
-      set(_soc Unknown)
+      set(_core Unknown)
     endif()
-    # detect cpu architecture
-    if((_cpu_architecture STREQUALS "7") OR
-       (_cpu_architecture STREQUALS "8"))
-      list(FIND arch${_cpu_architecture} ${_cpu_variant} _found)
-      if(_found GREATER -1)
-        math(EXPR index "${_found}+1")
-        list(GET arch${_cpu_architecture} ${index} _archname)
-      else()
-        set(_archname Unknown)
-      endif()
-    endif()
+    set(_archname "ARMv${_cpu_architecture}")
   else()
     set(_implementer Unknown)
-    set(_soc Unknown)
+    set(_core Unknown)
     set(_archname Unknown)
   endif()
   set(${outvar1} "${_implementer}" PARENT_SCOPE)
-  set(${outvar2} "${_soc}" PARENT_SCOPE)
+  set(${outvar2} "${_core}" PARENT_SCOPE)
   set(${outvar3} "${_archname}" PARENT_SCOPE)
 endfunction()

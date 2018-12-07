@@ -24,7 +24,8 @@ it supports.
 ============================= ================================================
 Key                           Description
 ============================= ================================================
-``MICRO_ARCHITECTURE``        Micro architecture code name of CPU
+``PROCESSOR_VENDOR``          Vendor name of a processor
+``PROCESSOR_MICRO_ARCHITECTURE`` Micro architecture of a processor
 ``HAS_SSE2``                  One if processor supports SSE2 instructions
 ``HAS_SSE3``                  One if processor supports SSE3 Prescot New
                               Instruction sets instructions
@@ -95,16 +96,25 @@ function(CMAKE_HOST_SYSTEM_INFORMATION_EXTRA)
       list(APPEND _RESULT_LIST ${_res})
       continue()
     endif()
-    if(_query STREQUAL MICRO_ARCHITECTURE)
-      set(detected_architecture)
+    if((_query STREQUAL PROCESSOR_MICRO_ARCHITECTURE) OR
+       (_query STREQUAL PROCESSOR_VENDOR))
+      set(vendor)
+      set(architecture)
       if("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)")
-        detect_x64_micro_architecture(detected_architecture)
-      elseif("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(ARM|ARM64)")
-        set(implementer)
-        detect_arm_micro_architecture(implementer detected_architecture)
-        message(STATUS "Found ${implementer}:${detected_architecture}")
+        detect_x64_micro_architecture(vendor architecture)
+      elseif("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(ARM|aarch64)")
+        set(vendor)
+        set(core)
+        set(base)
+        detect_arm_micro_architecture(vendor core base)
+        message(STATUS "Found ${vendor}:${base}:${core}")
+        set(architecture ${core})
       endif()
-      list(APPEND _RESULT_LIST ${detected_architecture})
+      if(_query STREQUAL PROCESSOR_MICRO_ARCHITECTURE)
+        list(APPEND _RESULT_LIST ${architecture})
+      else()
+        list(APPEND _RESULT_LIST ${vendor})
+      endif()
       continue()
     endif()
     if(_query MATCHES "^HAS_ARM_")
