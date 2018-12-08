@@ -7,7 +7,9 @@ endif()
 project(CMakeHostSystemInformationExtra_TEST_X86_64 VERSION 1.0 LANGUAGES C)
 include(CMakeHostSystemInformationExtra)
 
-set(TEST_CPUINFO_1 "processor	: 0
+if(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
+
+  set(TEST_CPUINFO_1 "processor	: 0
 vendor_id	: GenuineIntel
 cpu family	: 6
 model		: 78
@@ -34,17 +36,20 @@ cache_alignment	: 64
 address sizes	: 39 bits physical, 48 bits virtual
 power management:
 ")
-set(TEST_EXPECT_1 "skylake")
+  set(TEST_EXPECT_1 "skylake")
 
-foreach(testno IN ITEMS 1)
-  set(_PROC_CPUINFO "/tmp/CmakeHostSystemInformationExtra__test__cpuinfo")
-  file(WRITE ${_PROC_CPUINFO} "${TEST_CPUINFO_${testno}}")
-  detect_x64_micro_architecture(arg1 arg2)
-  if(arg2 MATCHES "${TEST_EXPECT_${testno}}")
-    message(STATUS "Test ${testno} passed for ${arg2}")
-  else()
-    message(FATAL_ERROR "Test ${testno} got unexpected result: ${arg2}.")
-  endif()
-endforeach()
+  foreach(testno IN ITEMS 1)
+    set(_PROC_CPUINFO "/tmp/CmakeHostSystemInformationExtra__test__cpuinfo")
+    file(WRITE ${_PROC_CPUINFO} "${TEST_CPUINFO_${testno}}")
+    detect_x64_micro_architecture(arg1 arg2)
+    if(arg2 MATCHES "${TEST_EXPECT_${testno}}")
+      message(STATUS "Test ${testno} passed for ${arg2}")
+    else()
+      message(FATAL_ERROR "Test ${testno} got unexpected result: ${arg2}.")
+    endif()
+  endforeach()
+elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
+  # TODO
+endif()
 
 # vim: ts=2 sw=2 sts=2 et

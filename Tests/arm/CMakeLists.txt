@@ -7,6 +7,9 @@ endif()
 project(CMakeHostSystemInformationExtra_TEST_ARM VERSION 1.0 LANGUAGES C)
 include(CMakeHostSystemInformationExtra)
 
+# ARM test only works on Linux
+if(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
+
 set(TEST_CPUINFO_1 "processor	     : 0
 BogoMIPS	      : 166.66
 Features	      : fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid
@@ -38,5 +41,7 @@ foreach(testno IN ITEMS 1 2)
     message(FATAL_ERROR "Test ${testno} got unexpected result: ${arg2}.")
   endif()
 endforeach()
+
+endif()
 
 # vim: ts=2 sw=2 sts=2 et
