@@ -6,6 +6,14 @@
 Here is a cmake module and sample program to optimize architecture features
 such as a SIMD extensions.
 
+## STATUS
+
+* Module `CMakeHostSystemInformationExtra`/function `cmake_host_system_information_extra()` is production ready on
+  x86_64 and ARM platforms.
+  - Tested on Linux, Mac, Windows with gcc, clang and icc on x86_64.
+  - Tested on Linux on ARM using AWS EC2 A1 instance.
+* Module `CMakeCompilerMachineOption()` is experimental status.
+
 ## How to use?
 
 1. Place cmake scripts under `Modules` folder in your project and add search path
