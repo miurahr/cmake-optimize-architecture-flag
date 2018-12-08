@@ -58,7 +58,10 @@ function(DETECT_ARM_MICRO_ARCHITECTURE outvar1 outvar2 outvar3)
   set(_cpu_implementer)
   set(_cpu_part)
   if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux") # Linux and Android
-    file(READ "/proc/cpuinfo" _cpuinfo)
+    if(NOT _PROC_CPUINFO) # not override for unit-test
+      set(_PROC_CPUINFO "/proc/cpuinfo")
+    endif()
+    file(READ ${_PROC_CPUINFO} _cpuinfo)
     string(REGEX REPLACE ".*CPU[ \t]*architecture[ \t]*:[ \t]+([6-9]).*" "\\1" _cpu_architecture "${_cpuinfo}")
     string(REGEX REPLACE ".*CPU[ \t]*variant[ \t]*:[ \t]+(0x[a-f0-9]+).*" "\\1" _cpu_variant "${_cpuinfo}")
     string(REGEX REPLACE ".*CPU[ \t]*implementer[ \t]*:[ \t]+(0x[a-f0-9]+).*" "\\1" _cpu_implementer "${_cpuinfo}")
