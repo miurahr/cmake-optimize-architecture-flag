@@ -17,7 +17,7 @@ matrix:
       env: TARGET=icc
 
 before_install:
-  - '[[ "X${TARGET}" == "Xicc" ]] && ~/install-icc.sh || true'
+  - '[[ "X${TARGET}" == "Xicc" ]] && ${TRAVIS_BUILD_DIR}/install-icc.sh || true'
 
 script:
   - source ~/.bashrc
