@@ -25,6 +25,7 @@ script:
   - cd build
   - cmake ..
   - cmake --build .
+  - ctest --verbose
 
 after_script:
   - '[[ ! -z "${INTEL_INSTALL_PATH}" ]] && uninstall_intel_software'
