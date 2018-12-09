@@ -9,10 +9,9 @@ DetectArmMicroArchitecture
 
 .. command:: detect_arm_micro_architecture
 
-   detect_arm_micro_architecture(<output implementer> <output SoC> <output Arch>)
+   detect_arm_micro_architecture(<implementer> <core> <arch>)
 
-  Determine the host ARM CPU and return implementer, SoC name,
-  and its architecture.
+  Determine the host ARM CPU and return implementer, core, and architecture.
 
 #]=======================================================================]
 

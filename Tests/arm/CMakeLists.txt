@@ -21,6 +21,8 @@ CPU part	      : 0xd08
 CPU revision	  : 3
 ")
 set(TEST_EXPECT_1 "Cortex-A72")
+set(TEST_FEATURE_1 "neon")
+
 set(TEST_CPUINFO_2 # MSM7227 processor
     "Processor : ARMv6-compatible processor rev 5 (v6l)
 BogoMIPS : 245.61
@@ -32,6 +34,8 @@ CPU part : 0xb36
 CPU revision : 5
 ")
 set(TEST_EXPECT_2 "ARM1136")
+set(TEST_FEATURE_2 "thumb")
+
 set(TEST_CPUINFO_3 # RPi B+/BCM2708
 "model name : ARMv6-compatible processor rev 7 (v6l)
 Features : half thumb fastmult vfp edsp java tls
@@ -42,6 +46,8 @@ CPU part : 0xb76
 CPU revision : 7
 ")
 set(TEST_EXPECT_3 "ARM1176")
+set(TEST_FEATURE_3 "java")
+
 set(TEST_CPUINFO_4 # NanoPi NEO
 "Processor : ARMv7 Processor rev 5 (v7l)
 Features : swp half thumb fastmult vfp edsp thumbee neon vfpv3 tls vfpv4 idiva idivt
@@ -52,6 +58,8 @@ CPU part : 0xc07
 CPU revision : 5
 ")
 set(TEST_EXPECT_4 "Cortex-A7")
+set(TEST_FEATURE_4 "vfpv4")
+
 set(TEST_CPUINFO_5 #Sony XPERIA C1905
 "Processor	: ARMv7 Processor rev 4 (v7l)
 Features	: swp half thumb fastmult vfp edsp neon vfpv3 tls vfpv4
@@ -62,6 +70,8 @@ CPU part	: 0x04d
 CPU revision	: 4
 ")
 set(TEST_EXPECT_5 "Krait") # QCT MSM8627 MTP
+set(TEST_FEATURE_5 "vfpv4")
+
 set(TEST_CPUINFO_6 # OMAP4 jet board
 "Processor   : ARMv7 Processor rev 3 (v7l)
 Features    : swp half thumb fastmult vfp edsp thumbee neon vfpv3
@@ -72,6 +82,7 @@ CPU part    : 0xc09
 CPU revision    : 3
 ")
 set(TEST_EXPECT_6 "Cortex-A9")
+set(TEST_FEATURE_6 "neon")
 
 set(TEST_CPUINFO_7   # ARM Cortex A53 (octa-core):
 "Processor   : AArch64 Processor rev 3 (aarch64)
@@ -91,6 +102,7 @@ CPU part    : 0xd03
 CPU revision    : 3
 ")
 set(TEST_EXPECT_7 "Cortex-A53")
+set(TEST_FEATURE_7 "neon")
 
 set(TEST_CPUINFO_8 # Freescale i.MX6 Quad/DualLite (Device Tree)
 "model name      : ARMv7 Processor rev 10 (v7l)
@@ -103,6 +115,7 @@ CPU part        : 0xc09
 CPU revision    : 10
 ")
 set(TEST_EXPECT_8 "Cortex-A9")
+set(TEST_FEATURE_8 "neon")
 
 foreach(testno IN ITEMS 1 2 3 4 5 6 7 8)
   set(_PROC_CPUINFO "/tmp/CmakeHostSystemInformationExtra__test__cpuinfo")
@@ -112,6 +125,13 @@ foreach(testno IN ITEMS 1 2 3 4 5 6 7 8)
     message(STATUS "Test ${testno} passed for ${arg2}")
   else()
     message(FATAL_ERROR "Test ${testno} got unexpected result: ${arg2}.")
+  endif()
+
+  check_cpu_feature(res "${TEST_FEATURE_${testno}}")
+  if(res)
+    message(STATUS "Found ${TEST_FEATURE_${testno}}")
+  else()
+    message(FATAL_ERROR "Test Feature ${testno}: ${TEST_FEATURE_${testno}} failed.")
   endif()
 endforeach()
 

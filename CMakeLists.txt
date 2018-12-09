@@ -39,13 +39,12 @@ enable_testing()
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Tests/arm")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Tests/x86_64")
 set(TEST_BASE_DIR "${CMAKE_SOURCE_DIR}/Tests")
-add_test(NAME cmake_host_system_information_extra_arm_test
-         COMMAND ${CMAKE_COMMAND} -DCMAKE_MODULE_PATH=${TEST_BASE_DIR}/../Modules ${TEST_BASE_DIR}/arm/
-         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Tests/arm")
 add_test(NAME cmake_host_system_information_extra_x64_test
          COMMAND ${CMAKE_COMMAND} -DCMAKE_MODULE_PATH=${TEST_BASE_DIR}/../Modules ${TEST_BASE_DIR}/x86_64/
          WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Tests/x86_64")
-
+add_test(NAME cmake_host_system_information_extra_arm_test
+         COMMAND ${CMAKE_COMMAND} -DCMAKE_MODULE_PATH=${TEST_BASE_DIR}/../Modules ${TEST_BASE_DIR}/arm/
+         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Tests/arm")
 #------------------------------------------------------------------------------
 # Example 1 For self compile
 #
