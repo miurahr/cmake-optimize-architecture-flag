@@ -3,25 +3,15 @@ environment:
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     platform: x64
-    ARCHITECTURE: amd64
-    VS_VER: 2017
     GENERATOR: Visual Studio 15 2017 Win64
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     platform: x86
-    VS_VER: 2015
-    ARCHITECTURE: x86
     GENERATOR: Visual Studio 14 2015
 
 shallow_clone: true
 
 install:
   - ps: |
-      Install-PackageProvider NuGet -Force
-      Import-PackageProvider NuGet -Force
-      Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-      Install-Module Pscx -AllowClobber
-      Install-Module VSSetup -Scope CurrentUser
-      Import-VisualStudioVars -VisualStudioVersion $env:VS_VER -Architecture $env:ARCHITECTURE
       New-Item -ItemType directory -Path cmake-build-windows
       Set-Location "$env:APPVEYOR_BUILD_FOLDER\cmake-build-windows"
       & cmake "-G$env:GENERATOR" .. 2>&1 | %{ "$_" }
