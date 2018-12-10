@@ -28,6 +28,8 @@ install:
       if ($LastExitCode -ne 0) { write-output "Fails with code:$LastExitCode"; exit 1 }
       & cmake --build . --config Release 2>&1 | %{ "$_" }
       if ($LastExitCode -ne 0) { write-output "Fails with code:$LastExitCode"; exit 1 }
+      & ctest --verbose
+      if ($LastExitCode -ne 0) { write-output "Fails with code:$LastExitCode"; exit 1 }
 
 build: off
 
