@@ -4,7 +4,7 @@ if(POLICY CMP0066)
     cmake_policy(SET CMP0066 NEW)
 endif()
 
-project(CMakeHostSystemInformationExtra_TEST_ARM VERSION 1.0 LANGUAGES C)
+project(CMakeHostSystemInformationExtra.arm VERSION 1.0 LANGUAGES C)
 include(CMakeHostSystemInformationExtra)
 
 # ARM test only works on Linux

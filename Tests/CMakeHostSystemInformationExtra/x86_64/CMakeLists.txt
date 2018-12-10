@@ -4,7 +4,7 @@ if(POLICY CMP0066)
     cmake_policy(SET CMP0066 NEW)
 endif()
 
-project(CMakeHostSystemInformationExtra_TEST_X86_64 VERSION 1.0 LANGUAGES C)
+project(CMakeHostSystemInformationExtra.X86_64 VERSION 1.0 LANGUAGES C)
 include(CMakeHostSystemInformationExtra)
 
 if(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
