@@ -3,7 +3,6 @@ add_test(NAME "CMakeHostSystemInformationExtra.arm"
          --build-and-test
          "${CMAKE_SOURCE_DIR}/Tests/CMakeHostSystemInformationExtra/arm"
          "${CMAKE_BINARY_DIR}/Tests/CMakeHostSystemInformationExtra/arm"
-         --build-two-config
          --build-generator ${CMAKE_GENERATOR}
          --build-project CMakeHostSystemInformationExtra
          --build-options -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/Modules
@@ -13,7 +12,6 @@ add_test(NAME "CMakeHostSystemInformationExtra.x64"
          --build-and-test
          "${CMAKE_SOURCE_DIR}/Tests/CMakeHostSystemInformationExtra/x86_64"
          "${CMAKE_BINARY_DIR}/Tests/CMakeHostSystemInformationExtra/x86_64"
-         --build-two-config
          --build-generator ${CMAKE_GENERATOR}
          --build-project CMakeHostSystemInformationExtra
          --build-options -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/Modules
