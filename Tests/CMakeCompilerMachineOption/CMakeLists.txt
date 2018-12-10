@@ -6,7 +6,7 @@ add_test(NAME "CMakeCompilerMachineOption.self"
          --build-generator ${CMAKE_GENERATOR}
          --build-project CMakeCompilerMachineOption
          --build-options "-DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/Modules"
-         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+         --test-command ${CMAKE_CTEST_COMMAND} -C ${CTestTest_CONFIG}
          )
 add_test(NAME "CMakeCompilerMachineOption.cross"
          COMMAND "${CMAKE_CTEST_COMMAND}"
@@ -18,5 +18,5 @@ add_test(NAME "CMakeCompilerMachineOption.cross"
          --build-options
            "-DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/Modules"
            -DTARGET_ARCHITECTURE=skylake
-           -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+         --test-command ${CMAKE_CTEST_COMMAND} -C ${CTestTest_CONFIG}
          )
