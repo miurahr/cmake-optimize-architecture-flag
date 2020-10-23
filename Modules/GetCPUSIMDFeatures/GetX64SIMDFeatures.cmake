@@ -13,7 +13,7 @@ GetX64SIMDFeatures
 
  supported targets are: "none", "generic", "core", "merom" (65nm Core2),
     "penryn" (45nm Core2), "nehalem", "westmere", "sandy-bridge", "ivy-bridge",
-    "haswell", "broadwell", "skylake", "skylake-xeon", "kaby-lake", "cannonlake", "silvermont",
+    "haswell", "broadwell", "skylake", "skylake-xeon", "kabylake", "cannonlake", "silvermont",
     "goldmont", "knl" (Knights Landing), "atom", "k8", "k8-sse3", "barcelona",
     "istanbul", "magny-cours", "bulldozer", "interlagos", "piledriver",
     "AMD-14h", "AMD-16h", "zen".
@@ -46,7 +46,8 @@ function(GET_X64_SIMD_FEATURES outvar tarch)
         set(_arch_knl       "sse" "sse2" "sse3" "ssse3" "sse4.1" "sse4.2" "avx" "rdrnd" "f16c" "avx2" "fma" "bmi" "bmi2" "avx512f" "avx512pf" "avx512er" "avx512cd")
         set(_arch_knm       "sse" "sse2" "sse3" "ssse3" "sse4.1" "sse4.2" "avx" "rdrnd" "f16c" "avx2" "fma" "bmi" "bmi2" "avx512f" "avx512cd" "avx512dq" "avx512bw" "avx512vl" "avx512ifma" "avx512vbmi" "avx512_4fmaps")
         set(_arch_cannonlake "sse" "sse2" "sse3" "ssse3" "sse4.1" "sse4.2" "avx" "rdrnd" "f16c" "avx2" "fma" "bmi" "bmi2" "avx512f" "avx512cd" "avx512dq" "avx512bw" "avx512vl" "avx512ifma" "avx512vbmi")
-        set(_arch_kaby-lake  "sse" "sse2" "sse3" "ssse3" "sse4.1" "sse4.2" "avx" "rdrnd" "f16c" "avx2" "fma" "bmi" "bmi2")
+        set(_arch_coffelake "sse" "sse2" "sse3" "ssse3" "sse4.1" "sse4.2" "avx" "rdrnd" "f16c" "avx2" "fma" "bmi" "bmi2")
+        set(_arch_kabylake   "sse" "sse2" "sse3" "ssse3" "sse4.1" "sse4.2" "avx" "rdrnd" "f16c" "avx2" "fma" "bmi" "bmi2")
         set(_arch_skylake-xeon   "sse" "sse2" "sse3" "ssse3" "sse4.1" "sse4.2" "avx" "rdrnd" "f16c" "avx2" "fma" "bmi" "bmi2" "avx512f" "avx512cd" "avx512dq" "avx512bw" "avx512vl")
         set(_arch_skylake-avx512 "sse" "sse2" "sse3" "ssse3" "sse4.1" "sse4.2" "avx" "rdrnd" "f16c" "avx2" "fma" "bmi" "bmi2" "avx512f" "avx512cd" "avx512dq" "avx512bw" "avx512vl")
         set(_arch_skylake   "sse" "sse2" "sse3" "ssse3" "sse4.1" "sse4.2" "avx" "rdrnd" "f16c" "avx2" "fma" "bmi" "bmi2")
