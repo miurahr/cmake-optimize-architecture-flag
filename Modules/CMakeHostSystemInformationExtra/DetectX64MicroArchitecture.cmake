@@ -124,7 +124,7 @@ function(DETECT_X64_MICRO_ARCHITECTURE out_vendor out_arch)
             92  "goldmont"
             90  "silvermont"    76 "silvermont"
             102 "cannonlake"
-            142 "kaby-lake"    158 "kaby-lake"
+            142 "kabylake"    158 "coffelake"
             85  "skylake-avx512"
             78  "skylake"       94  "skylake"
             61  "broadwell"     71  "broadwell" 79  "broadwell" 86  "broadwell"
