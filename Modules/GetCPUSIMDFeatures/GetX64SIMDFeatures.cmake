@@ -13,7 +13,8 @@ GetX64SIMDFeatures
 
  supported targets are: "none", "generic", "core", "merom" (65nm Core2),
     "penryn" (45nm Core2), "nehalem", "westmere", "sandy-bridge", "ivy-bridge",
-    "haswell", "broadwell", "skylake", "skylake-xeon", "kabylake", "cannonlake", "silvermont",
+    "haswell", "broadwell", "skylake", "skylake-xeon", "kabylake", "coffelake",
+    "cannonlake", "silvermont",
     "goldmont", "knl" (Knights Landing), "atom", "k8", "k8-sse3", "barcelona",
     "istanbul", "magny-cours", "bulldozer", "interlagos", "piledriver",
     "AMD-14h", "AMD-16h", "zen".
