@@ -30,7 +30,7 @@ function(CHECK_CPU_FEATURE outvar feature)
         set(_PROC_CPUINFO "/proc/cpuinfo")
       endif()
       file(READ ${_PROC_CPUINFO} _cpuinfo)
-      string(REGEX REPLACE ".*(flags|Features)[ \t]*:[ \t]+([^\n]+).*" "\\2" _cpu_flags "${_cpuinfo}")
+      string(REGEX REPLACE ".*[^ ](flags|Features)[ \t]*:[ \t]+([^\n]+).*" "\\2" _cpu_flags "${_cpuinfo}")
     elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
       execute_process(COMMAND "/usr/sbin/sysctl -n machdep.cpu.features"
                       OUTPUT_VARIABLE _cpu_flags
