@@ -1,6 +1,7 @@
 /* Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
    file Copyright.txt for details.  */
 
+#include <inttypes.h>
 #include <windows.h>
 #include <errno.h>
 #include <stdio.h>
@@ -12,10 +13,10 @@
 #  define USE_CPUID_INTRINSICS 0
 #endif
 
-void cpuid(int result[4], int select)
+void cpuid(int result[4], int function_id)
 {
 #  if USE_CPUID_INTRINSICS
-    __cpuid(result, select);
+    __cpuid(result, function_id);
 #  else
     int tmp[4];
     _asm {
@@ -24,7 +25,7 @@ void cpuid(int result[4], int select)
       push ecx
       push edx
       ; <<CPUID>>
-      mov eax, select
+      mov eax, function_id
       cpuid
       _asm _emit 0x0f
       _asm _emit 0xa2
@@ -38,16 +39,70 @@ void cpuid(int result[4], int select)
       pop eax
     }
     memcpy(result, tmp, sizeof(tmp));
-#endif
+#   endif
+}
+
+void cpuidex(int result[4], int function_id, int subfunction_id)
+{
+#  if USE_CPUID_INTRINSICS
+    __cpuidex(result, function_id, subfunction_id);
+#  else
+   // not implemented
+#  endif
 }
 
 int main() {
+	// https://learn.microsoft.com/en-us/cpp/intrinsics/cpuid-cpuidex?view=msvc-170
+	
     int info[4] = { 0, 0, 0, 0 };
 #   define FLAG(a,b) (info[a] & ((int)1 << b))
 
     cpuid(info, 0);
     int nIds = info[0];
-    cpuid(info,1);
+	
+	int exinfo0[4] = { 0, 0, 0, 0 };
+	__cpuidex(exinfo0, 0, 0);
+	
+	char vendor[0x20];
+	memset(vendor, 0, sizeof(vendor));
+	*(int*)(vendor + 0) = exinfo0[1];
+	*(int*)(vendor + 4) = exinfo0[3];
+	*(int*)(vendor + 8) = exinfo0[2];
+	
+	int isIntel = 0;
+	int isAMD = 0;
+	
+	if (strcmp(vendor, "GenuineIntel") == 0) {
+		isIntel = 1;
+	}
+	else if (strcmp(vendor, "AuthenticAMD") == 0) {
+		isAMD = 1;
+	}
+
+    cpuid(info, 1);
+    if (FLAG(2, 0) != 0) printf("pni ");
+    if (FLAG(2, 0) != 0) printf("sse3 ");
+    if (FLAG(2, 1) != 0) printf("pclmulqdq ");
+    if (FLAG(2, 3) != 0) printf("monitor ");
+    if (FLAG(2, 9) != 0) printf("ssse3 ");
+    if (FLAG(2,12) != 0) printf("fma ");
+    if (FLAG(2,13) != 0) printf("cmpxchg16b ");
+    if (FLAG(2,19) != 0) printf("sse4_1 ");
+    if (FLAG(2,20) != 0) printf("sse4_2 ");
+    if (FLAG(2,22) != 0) printf("movbe ");
+    if (FLAG(2,23) != 0) printf("popcnt ");
+    if (FLAG(2,25) != 0) printf("aes ");
+    if (FLAG(2,26) != 0) printf("xsave ");
+    if (FLAG(2,27) != 0) printf("osxsave ");
+    if (FLAG(2,28) != 0) printf("avx ");
+    if (FLAG(2,29) != 0) printf("f16c ");
+    if (FLAG(2,30) != 0) printf("rdrand ");
+
+    if (FLAG(3, 5) != 0) printf("msr ");
+    if (FLAG(3, 8) != 0) printf("cx8 ");
+    if (FLAG(3,11) != 0) printf("sep ");
+    if (FLAG(3,15) != 0) printf("cmov ");
+    if (FLAG(3,19) != 0) printf("clfsh ");
     if (FLAG(3,23) != 0) printf("mmx ");
     if (FLAG(3,24) != 0) printf("fxsr ");
     if (FLAG(3,25) != 0) printf("sse ");
@@ -57,44 +112,39 @@ int main() {
     if (FLAG(3,29) != 0) printf("tm ");
     if (FLAG(3,30) != 0) printf("ia64 ");
     if (FLAG(3,31) != 0) printf("pbe ");
-    if (FLAG(2, 0) != 0) printf("pni "); // SSE3
-    if (FLAG(2, 9) != 0) printf("ssse3 ");
-    if (FLAG(2,19) != 0) printf("sse4_1 ");
-    if (FLAG(2,20) != 0) printf("sse4_2 ");
-    if (FLAG(2,25) != 0) printf("aes ");
-    if (FLAG(2,28) != 0) printf("avx ");
-    if (FLAG(2,12) != 0) printf("fma ");
-    if (FLAG(2,30) != 0) printf("rdrand ");
 
-    if (nIDs >= 0x00000007) {
+    if (nIds >= 0x00000007) {
         cpuid(info, 7);
+        if (FLAG(1, 0) != 0) printf("fsgsbase ");
         if (FLAG(1, 2) != 0) printf("tsc_adjust ");
+        if (FLAG(1, 3) != 0) printf("bmi1 ");
+        if (FLAG(1, 4) != 0 && isIntel) printf("hle ");
+        if (FLAG(1, 5) != 0) printf("avx2 ");
         if (FLAG(1, 7) != 0) printf("smep ");
+        if (FLAG(1, 8) != 0) printf("bmi2 ");
         if (FLAG(1, 9) != 0) printf("erms ");
         if (FLAG(1,10) != 0) printf("invpcid ");
-        if (FLAG(1,11) != 0) printf("rtm ");
+        if (FLAG(1,11) != 0 && isIntel) printf("rtm ");
         if (FLAG(1,12) != 0) printf("cqm ");
-        if (FLAG(1, 4) != 0) printf("hle ");
-        if (FLAG(1, 5) != 0) printf("avx2 ");
-        if (FLAG(1, 3) != 0) printf("bmi1 ");
-        if (FLAG(1, 8) != 0) printf("bmi2 ");
-        if (FLAG(1,19) != 0) printf("adx ");
         if (FLAG(1,14) != 0) printf("mpx ");
         if (FLAG(1,15) != 0) printf("rdt_a ");
+        if (FLAG(1,16) != 0) printf("avx512f ");
+        if (FLAG(1,17) != 0) printf("avx512dq ");
         if (FLAG(1,18) != 0) printf("rdseed ");
+        if (FLAG(1,19) != 0) printf("adx ");
         if (FLAG(1,20) != 0) printf("smap ");
+        if (FLAG(1,21) != 0) printf("avx512ifma ");
         if (FLAG(1,23) != 0) printf("clflushopt ");
         if (FLAG(1,24) != 0) printf("clwb ");
         if (FLAG(1,25) != 0) printf("intel_pt ");
-        if (FLAG(1,29) != 0) printf("sha_ni ");
-        if (FLAG(1,16) != 0) printf("avx512f ");
-        if (FLAG(1,28) != 0) printf("avx512cd ");
         if (FLAG(1,26) != 0) printf("avx512pf ");
         if (FLAG(1,27) != 0) printf("avx512er ");
+        if (FLAG(1,28) != 0) printf("avx512cd ");
+        if (FLAG(1,29) != 0) printf("sha ");
+        if (FLAG(1,29) != 0) printf("sha_ni ");
         if (FLAG(1,30) != 0) printf("avx512bw ");
         if (FLAG(1,31) != 0) printf("avx512vl ");
-        if (FLAG(1,17) != 0) printf("avx512dq ");
-        if (FLAG(1,21) != 0) printf("avx512ifma ");
+        
         if (FLAG(2, 0) != 0) printf("prefetchwt1 ");
         if (FLAG(2, 1) != 0) printf("avx512vbmi ");
         if (FLAG(2, 2) != 0) printf("umip ");
@@ -120,8 +170,9 @@ int main() {
         if (FLAG(2, 2) != 0) printf("svm ");
         if (FLAG(2, 3) != 0) printf("extapic ");
         if (FLAG(2, 4) != 0) printf("cr8_legacy ");
-        if (FLAG(2, 5) != 0) printf("abm ");
-        if (FLAG(2, 6) != 0) printf("sse4a ");
+        if (FLAG(2, 5) != 0 && isIntel) printf("lzcnt ");
+        if (FLAG(2, 5) != 0 && isAMD) printf("abm ");
+        if (FLAG(2, 6) != 0 && isAMD) printf("sse4a ");
         if (FLAG(2, 7) != 0) printf("misalignsse ");
         if (FLAG(2, 8) != 0) printf("3dnowprefetch ");
         if (FLAG(2, 9) != 0) printf("osvw ");

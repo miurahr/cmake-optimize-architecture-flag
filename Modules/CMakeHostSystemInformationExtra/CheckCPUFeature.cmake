@@ -30,19 +30,17 @@ function(CHECK_CPU_FEATURE outvar feature)
         set(_PROC_CPUINFO "/proc/cpuinfo")
       endif()
       file(READ ${_PROC_CPUINFO} _cpuinfo)
-      string(REGEX REPLACE ".*(flags|Features)[ \t]*:[ \t]+([^\n]+).*" "\\2" _cpu_flags "${_cpuinfo}")
+      string(REGEX REPLACE ".*[^ ](flags|Features)[ \t]*:[ \t]+([^\n]+).*" "\\2" _cpu_flags "${_cpuinfo}")
     elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
       execute_process(COMMAND "/usr/sbin/sysctl -n machdep.cpu.features"
                       OUTPUT_VARIABLE _cpu_flags
                       ERROR_QUIET
                       OUTPUT_STRIP_TRAILING_WHITESPACE)
-      string(TOLOWER "${_cpu_flags}" _cpu_flags)
       string(REPLACE "." "_" _cpu_flags "${_cpu_flags}")
     elseif(MSVC)
       try_run(RUN_RESULT COMP_RESULT ${CMAKE_CURRENT_BINARY_DIR} ${_checkcpufeaturedir}/win32_cpufeatures.c
               CMAKE_FLAGS -g
-              RUN_OUTPUT_VARIABLE flags)
-      message(STATUS "Detected features: ${flags}")
+              RUN_OUTPUT_VARIABLE _cpu_flags)
     elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "OpenBSD" OR
            CMAKE_HOST_SYSTEM_NAME STREQUAL "FreeBSD" OR
            CMAKE_HOST_SYSTME_NAME STREQUAL "NetBSD")
@@ -51,21 +49,22 @@ function(CHECK_CPU_FEATURE outvar feature)
                       ERROR_QUIET
                       OUTPUT_STRIP_TRAILING_WHITESPACE)
       string(REGEX REPLACE ".*=0x[0-9a-f]+<[ \t]+([^\n]+).*" "\\1" _cpu_flags "${_cpu_features}")
-      string(REPLACE "\n" ";" _cpu_flags "${_cpu_features}")
-      string(TOLOWER "${_cpu_flags}" _cpu_flags)
     elseif((CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG) AND
          ("${CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(x86|AMD64)"))
       try_run(RUN_RESULT COMP_RESULT ${CMAKE_CURRENT_BINARY_DIR} ${_checkcpufeaturedir}/gcc_cpufeatures.c
               CMAKE_FLAGS -g
-              RUN_OUTPUT_VARIABLE flags)
-      message(STATUS "Detected features: ${flags}")
+              RUN_OUTPUT_VARIABLE _cpu_flags)
     else()
       # TODO ARM and PPC with GCC/CLANG
       set(${outvar} 0 PARENT_SCOPE)
       return()
     endif()
+    string(REPLACE "\n" ";" _cpu_flags "${_cpu_flags}")
+    string(TOLOWER "${_cpu_flags}" _cpu_flags)
     string(REPLACE " " ";" _check_cpu_feature_values "${_cpu_flags}")
+	set(_check_cpu_feature_values ${_check_cpu_feature_values} CACHE INTERNAL "cpu_check")
   endif()
+  
   # aliases
   # ARMv8-A returns asimd for neon on Linux
   if(feature STREQUAL neon)
